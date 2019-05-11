@@ -1,0 +1,10 @@
+APP_PORT=port
+AUTH_SECRET=secret
+DB_USERNAME=useername
+DB_PASSWORD=password
+DB_DATABASE=database
+DB_HOST=host
+MAIL_HOST=mail_host
+MAIL_PORT=mail_port
+MAIL_USER=mail_user
+MAIL_PASS=mail_pass
