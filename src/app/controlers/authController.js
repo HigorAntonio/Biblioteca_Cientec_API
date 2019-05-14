@@ -16,10 +16,13 @@ function generateToken(params = {}) {
 }
 
 router.post('/register', async (req, res) => {
+    if (req.body.email === "" || req.body.password === "" || req.body.name === "") {
+        return res.status(400).send({ error: 'One or more empty registration fields' });
+    }
     const { email } = req.body;
     try {
         if (await User.findOne({ where: { email: email } }))
-            return res.status(400).send({ error: 'User already exists'});
+            return res.status(400).send({ error: 'User already exists' });
         
         const user = await User.create(req.body);
 
@@ -32,6 +35,7 @@ router.post('/register', async (req, res) => {
     } catch (err) {
         return res.status(400).send({ error: 'Registration failed' });
     }
+    
 });
 
 router.post('/authenticate', async (req, res) => {
