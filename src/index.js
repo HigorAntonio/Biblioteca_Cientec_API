@@ -14,5 +14,5 @@ app.get('/', (req, res) => {
 require('./app/controlers/index')(app);
 
 app.listen(process.env.PORT, () => {
-    console.log(`bbt_cientec_api - PORT ${process.env.APP_PORT}`);
+    console.log(`bbt_cientec_api - PORT ${process.env.PORT}`);
 });
