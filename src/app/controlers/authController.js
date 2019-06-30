@@ -11,14 +11,11 @@ const router = express.Router();
 
 function generateToken(params = {}) {
     return jwt.sign(params, authConfig.secret, {
-        expiresIn: 300,
-    }); //expiresIn: '60d'
+        expiresIn: '60d',
+    }); //expiresIn: 300 // 5 minutos
 }
 
 router.post('/register', async (req, res) => {
-    if (req.body.email === "" || req.body.password === "" || req.body.name === "") {
-        return res.status(400).send({ error: 'One or more empty registration fields' });
-    }
     const { email } = req.body;
     try {
         if (await User.findOne({ where: { email: email } }))

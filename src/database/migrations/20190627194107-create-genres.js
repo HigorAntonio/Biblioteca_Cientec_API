@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Users', {
+    return queryInterface.createTable('Genres', { 
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,22 +12,7 @@ module.exports = {
       name: {
         allowNull: false,
         type: Sequelize.STRING,
-      },
-      email: {
-        allowNull: false,
-        isEmail: true,
-        type: Sequelize.STRING,
         unique: true,
-      },
-      password: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      passwordResetToken: {
-        type: Sequelize.STRING,
-      },
-      passwordResetExpires: {
-        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
@@ -40,7 +25,7 @@ module.exports = {
     });
   },
 
-  down: (queryInterface) => {
-    return queryInterface.dropTable('Users');
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.dropTable('Genres');
   }
 };

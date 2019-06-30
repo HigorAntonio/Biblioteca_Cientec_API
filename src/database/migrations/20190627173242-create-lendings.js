@@ -2,31 +2,31 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Users', {
+    return queryInterface.createTable('Lendings', { 
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
+      userId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: 'id',
+        }
       },
-      email: {
+      bookId: {
         allowNull: false,
-        isEmail: true,
-        type: Sequelize.STRING,
-        unique: true,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Books',
+          key: 'id',
+        }
       },
-      password: {
+      returnDate: {
         allowNull: false,
-        type: Sequelize.STRING,
-      },
-      passwordResetToken: {
-        type: Sequelize.STRING,
-      },
-      passwordResetExpires: {
         type: Sequelize.DATE,
       },
       createdAt: {
@@ -40,7 +40,7 @@ module.exports = {
     });
   },
 
-  down: (queryInterface) => {
-    return queryInterface.dropTable('Users');
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.dropTable('Lendings');
   }
 };

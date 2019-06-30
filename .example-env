@@ -8,3 +8,6 @@ MAIL_HOST=mail_host
 MAIL_PORT=mail_port
 MAIL_USER=mail_user
 MAIL_PASS=mail_pass
+AWS_ACCESS_KEY_ID=aws_access_key_id
+AWS_SECRET_ACCESS_KEY=aws_secret_access_key
+AWS_DEFAULT_REGION=aws_default_region
