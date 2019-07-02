@@ -1,5 +1,6 @@
 const express = require('express');
 const { Review } = require('../models');
+const sequelize = require('sequelize');
 const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
@@ -29,18 +30,43 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:bookId', async (req, res) => {
-    const review = await Review.findAll({ 
+    const userReview = await Review.findAll({
         where: {
-            userId: req.userId, 
+            userId: req.userId,
             bookId: req.params.bookId
         }
     });
 
-    if (!review) {
+    if (!userReview) {
+        return res.status(400).send({ error: 'Could not find a review with the informed id' });
+    }
+    
+    const stats = await Review.findAll({
+        attributes: [[sequelize.fn('AVG', sequelize.col('rating')), 'bookRating'], 
+        [sequelize.fn('COUNT', sequelize.col('userId')), 'numReviews']],
+        where: {
+            bookId: req.params.bookId
+        }
+    });
+    
+    if (!stats) {
+        return res.status(400).send({ error: 'Could not find a review with the informed id' });
+    }
+    
+    const reviews = await Review.sequelize.query('SELECT userId, name as userName, bookId, '+
+        'review, rating, Reviews.createdAt, Reviews.updatedAt '+
+        'FROM Reviews, Users WHERE Users.id=userId;',
+        {type: sequelize.QueryTypes.SELECT});
+
+    if (!reviews) {
         return res.status(400).send({ error: 'Could not find a review with the informed id' });
     }
 
-    return res.send(review);
+    return res.send({
+        userReview,
+        stats,
+        reviews
+    });
 });
 
 module.exports = app => app.use('/reviews', router);

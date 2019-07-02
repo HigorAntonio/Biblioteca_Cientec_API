@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const multerConfig  = require('../../config/multer');
 const { Book } = require('../models');
+const sequelize = require('sequelize');
 const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
@@ -9,7 +10,11 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.get('/', async (req, res) => {
-    const books = await Book.findAll();
+    const books = await Book.sequelize.query('SELECT Books.id as bookId, isbn, title, originalTitle, '+
+        'edition, publisher, coverUrl, coverName, description, numberOfPages, language, status, '+
+        'authorId, name as authorName, about as authorAbout '+
+        'FROM Books, Authors '+
+        'WHERE Authors.id=authorId;', {type: sequelize.QueryTypes.SELECT});
 
     return res.send(books);
 });
