@@ -1,5 +1,5 @@
 const express = require('express');
-const { BookGenre } = require('../models');
+const { BookGenre, Genre } = require('../models');
 const authMiddleware = require('../middlewares/auth');
 
 const router = express.Router();
@@ -47,7 +47,19 @@ router.get('/:bookId', async(req, res) => {
         return res.status(400).send({ error: 'Could not find a register with the informed id' });
     }
 
-    return res.send(bookGenre);
+    var bookGenres = [];
+    for (var i = 0; i < bookGenre.length; i++) {
+        bookGenres[i] = await Genre.findOne({
+            where: {
+                id: bookGenre[i]["genreId"]
+            }
+        });
+    }
+
+    return res.send({
+        //bookGenre,
+        bookGenres
+    });
 });
 
 module.exports = app => app.use('/bookGenre', router);

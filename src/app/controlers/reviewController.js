@@ -15,9 +15,30 @@ router.post('/', async (req, res) => {
             userId, bookId, review, rating
         });
 
-        res.send({
-            rev
+        return res.send(rev);
+    } catch (err) {
+        res.status(400).send({ error: err });
+    }
+});
+
+router.put('/', async (req, res) => {
+    try {
+        const review = await Review.update({
+            rating: req.body.rating,
+            review: req.body.review
+        },
+        {
+            where: { 
+                userId: req.userId,
+                bookId: req.body.bookId, 
+            }
         });
+
+        if (!review) {
+            return res.status(400).send({ error: 'Could not update the review' });
+        }
+
+        return res.send();
     } catch (err) {
         res.status(400).send({ error: err });
     }
@@ -53,9 +74,10 @@ router.get('/:bookId', async (req, res) => {
         return res.status(400).send({ error: 'Could not find a review with the informed id' });
     }
     
-    const reviews = await Review.sequelize.query('SELECT userId, name as userName, bookId, '+
-        'review, rating, Reviews.createdAt, Reviews.updatedAt '+
-        'FROM Reviews, Users WHERE Users.id=userId;',
+    const reviews = await Review.sequelize.query(`SELECT userId, name as userName, bookId, 
+        review, rating, Reviews.createdAt, Reviews.updatedAt 
+        FROM Reviews, Users WHERE Users.id=userId and bookId=${req.params.bookId}
+        ORDER BY updatedAt DESC;`,
         {type: sequelize.QueryTypes.SELECT});
 
     if (!reviews) {
@@ -67,6 +89,28 @@ router.get('/:bookId', async (req, res) => {
         stats,
         reviews
     });
+});
+
+router.delete('/:bookId', async (req, res) => {
+    const review = await Review.findOne({
+        where: {
+            userId: req.userId,
+            bookId: req.params.bookId
+        }
+    });
+
+    if (!review) {
+        return res.status(400).send({ error: 'Could not find a review for the informed bookId' });
+    }
+
+    await Review.destroy({
+        where: {
+            userId: req.userId,
+            bookId: req.params.bookId  
+        }
+    });
+
+    return res.send();
 });
 
 module.exports = app => app.use('/reviews', router);
